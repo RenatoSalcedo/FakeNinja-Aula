@@ -18,7 +18,7 @@ func _ready():
 	set_process(true)
 
 func _process(delta):
-	if position.y > 800 and slice:
+	if position.y > 800:
 		emit_signal("life")
 		queue_free()
 	if body0.position.y > 800 && body1.position.y > 800:
@@ -26,7 +26,7 @@ func _process(delta):
 
 func born(ini_pos):
 	position = ini_pos
-	var ini_vel = Vector2(0, rand_range(-1000, -800))
+	var ini_vel = Vector2(0, rand_range(-900, -800))
 	
 	if ini_pos.x < 640:
 		ini_vel = ini_vel.rotated(deg2rad(rand_range(0, -30)))
@@ -38,8 +38,8 @@ func born(ini_pos):
 
 func cut():
 	if slice: return
-	
 	slice = true
+	
 	emit_signal("score")
 	
 	set_mode(RigidBody2D.MODE_KINEMATIC)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://scripts/main.gd" type="Script" id=1]
 [ext_resource path="res://assets/bgfruitninja.jpg" type="Texture" id=2]
@@ -7,10 +7,55 @@
 [ext_resource path="res://assets/Ninja Roxo.png" type="Texture" id=5]
 [ext_resource path="res://assets/soupofjustice.ttf" type="DynamicFontData" id=6]
 [ext_resource path="res://assets/bomb100.png" type="Texture" id=7]
+[ext_resource path="res://assets/gameover.png" type="Texture" id=8]
 
 [sub_resource type="DynamicFont" id=1]
 size = 150
 font_data = ExtResource( 6 )
+
+[sub_resource type="GDScript" id=3]
+script/source = "extends Control
+
+var canInitiate = false
+onready var score = get_node(\"GOScreen/Pontos\")
+
+func _ready():
+	set_process_input(true)
+
+func _input(event):
+	if event is InputEventScreenTouch and canInitiate:
+		get_tree().reload_current_scene()
+
+func start():
+	show()
+	get_node(\"Animation\").play(\"GameOver\")
+	get_node(\"RestartTime\").start()
+
+func _on_RestartTime_timeout():
+	canInitiate = true
+	get_node(\"GOScreen/Jogar\").show()
+"
+
+[sub_resource type="DynamicFont" id=2]
+size = 65
+outline_color = Color( 0.337255, 0.290196, 0.462745, 1 )
+font_data = ExtResource( 6 )
+
+[sub_resource type="Animation" id=4]
+resource_name = "GameOver"
+length = 0.7
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.7 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
 
 [node name="Main" type="Node2D"]
 script = ExtResource( 1 )
@@ -27,7 +72,6 @@ wait_time = 2.0
 autostart = true
 
 [node name="InputProc" type="Node2D" parent="."]
-editor/display_folded = true
 script = ExtResource( 3 )
 
 [node name="Inter" type="Timer" parent="InputProc"]
@@ -44,6 +88,7 @@ volume_db = 6.433
 wait_time = 0.5
 
 [node name="Control" type="Control" parent="."]
+editor/display_folded = true
 margin_right = 40.0
 margin_bottom = 40.0
 
@@ -84,7 +129,61 @@ margin_right = 1058.34
 margin_bottom = 118.506
 texture = ExtResource( 7 )
 
+[node name="GameOver" type="Control" parent="."]
+modulate = Color( 1, 1, 1, 0 )
+margin_right = 40.0
+margin_bottom = 40.0
+script = SubResource( 3 )
+
+[node name="GOScreen" type="Sprite" parent="GameOver"]
+position = Vector2( 0, 0.492661 )
+scale = Vector2( 1.50422, 1.50245 )
+z_index = 99
+texture = ExtResource( 8 )
+centered = false
+
+[node name="Jogar" type="Label" parent="GameOver/GOScreen"]
+margin_left = 147.0
+margin_top = 310.0
+margin_right = 711.0
+margin_bottom = 473.0
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color = Color( 0.403922, 0.345098, 0.54902, 1 )
+text = "Toque para Jogar
+"
+align = 1
+
+[node name="Score" type="Label" parent="GameOver/GOScreen"]
+margin_left = 339.905
+margin_top = 12.3853
+margin_right = 515.905
+margin_bottom = 216.385
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color = Color( 0.403922, 0.345098, 0.54902, 1 )
+text = "Score
+
+"
+
+[node name="Pontos" type="Label" parent="GameOver/GOScreen"]
+margin_left = 365.337
+margin_top = 90.6636
+margin_right = 489.337
+margin_bottom = 294.664
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color = Color( 0.403922, 0.345098, 0.54902, 1 )
+text = "0
+
+"
+align = 1
+
+[node name="Animation" type="AnimationPlayer" parent="GameOver"]
+anims/GameOver = SubResource( 4 )
+
+[node name="RestartTime" type="Timer" parent="GameOver"]
+wait_time = 2.0
+
 [connection signal="timeout" from="Generator" to="." method="_on_Generator_timeout"]
 [connection signal="timeout" from="InputProc/Inter" to="InputProc" method="_on_Inter_timeout"]
 [connection signal="timeout" from="InputProc/Limit" to="InputProc" method="_on_Limit_timeout"]
 [connection signal="timeout" from="InputProc/SoundTime" to="InputProc" method="_on_SoundTime_timeout"]
+[connection signal="timeout" from="GameOver/RestartTime" to="GameOver" method="_on_RestartTime_timeout"]

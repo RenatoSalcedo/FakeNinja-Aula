@@ -10,6 +10,7 @@ var watermelon = preload("res://scene/Watermelon.tscn")
 var bomb = preload("res://scene/Bomb.tscn")
 
 onready var lblScore = get_node("Control/Score")
+onready var inputProc = get_node("InputProc")
 
 onready var lBomb1 = get_node("Control/Bomb1")
 onready var lBomb2 = get_node("Control/Bomb2")
@@ -22,6 +23,8 @@ func _ready():
 	randomize() 
 
 func _on_Generator_timeout():
+	if lifes <= 0: return
+	
 	for i in range(0, rand_range(1, 4)):
 		var type = int(rand_range(0, 6))
 		var obj
@@ -39,7 +42,7 @@ func _on_Generator_timeout():
 		else:
 			obj = bomb.instance()
 			
-		obj.born(Vector2(rand_range(200, 1080), rand_range(600, 1000)))
+		obj.born(Vector2(rand_range(200, 1080), rand_range(750, 800)))
 		obj.connect("life", self, "dec_life")
 		
 		if type <= 4:
@@ -51,7 +54,7 @@ func dec_life():
 	lifes -= 1
 	if lifes == 0:
 		lBomb1.modulate = Color(255, 255, 255, 0)
-		#perder()
+		perder()
 	if lifes == 2:
 		lBomb3.modulate = Color(255, 255, 255, 0)
 	if lifes == 1: 
@@ -62,4 +65,8 @@ func inc_score():
 	
 	score += 1
 	lblScore.set_text(str(score))
-	
+
+func perder():
+	inputProc.gameover = true
+	get_node("GameOver").score.set_text(str(score))
+	get_node("GameOver").start()

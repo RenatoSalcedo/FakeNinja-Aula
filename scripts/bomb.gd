@@ -4,7 +4,6 @@ onready var shape = get_node("Shape")
 onready var sprite = get_node("Sprite")
 onready var explode = get_node("ExplodeBomb")
 onready var sExplode = get_node("Explode")
-onready var sTime = get_node("SoundTime")
 
 signal life
 

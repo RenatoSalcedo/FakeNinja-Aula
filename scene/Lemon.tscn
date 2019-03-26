@@ -7,6 +7,8 @@
 radius = 64.2478
 
 [node name="Lemon" type="RigidBody2D"]
+z_index = 1
+collision_layer = 2
 gravity_scale = 8.0
 script = ExtResource( 1 )
 
